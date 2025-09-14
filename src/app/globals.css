@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 262.1 83.3% 57.8%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 262.1 83.3% 57.8%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* --background: 222.2 84% 4.9%; */ /* Старий фон */
+    --background: 257 26% 9%;      /* Новий --color-background: #0D0B14 */
+    --foreground: 210 40% 98%;    /* Текст залишаємо білим */
+
+    /* --primary: 262.1 83.3% 57.8%; */ /* Старий фіолетовий */
+    --primary: 259 63% 60%;       /* Новий --color-primary: #7F56D9 */
+    --primary-foreground: 210 40% 98%;
+
+    /* --accent: 217.2 32.6% 17.5%; */ /* Старий акцент */
+    --accent: 166 100% 38%;       /* Новий --color-accent: #00C49A */
+    --accent-foreground: 210 40% 98%;
+
+    --card: 254 22% 11%;          /* Новий --color-card-background: #161322 */
+    --card-foreground: 210 40% 98%;
+
+    --popover: 254 22% 11%;
+    --popover-foreground: 210 40% 98%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 259 63% 60%; /* Оновлюємо колір ring, щоб відповідав новому primary */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom styles for MVP */
+.hero-gradient {
+  background-color: hsl(var(--background));
+  background-image: radial-gradient(at 27% 37%, hsl(var(--primary) / 0.1), transparent 50%),
+                    radial-gradient(at 97% 21%, hsl(var(--primary) / 0.15), transparent 50%),
+                    radial-gradient(at 70% 94%, hsl(var(--accent) / 0.1), transparent 50%);
+}
+
+.feature-card {
+  @apply bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1;
+}
+
+.pricing-card {
+  @apply bg-white rounded-2xl shadow-xl border-2 border-transparent hover:border-violet-200 transition-all duration-300;
+}
+
+.pricing-card.featured {
+  @apply border-violet-500 scale-105;
+}
+
+.before-after-slider {
+  @apply relative overflow-hidden rounded-lg;
+}
+
+.upload-zone {
+  @apply border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-violet-400 transition-colors duration-200;
+}
+
+.upload-zone.dragover {
+  @apply border-violet-500 bg-violet-50;
+}
+
+.processing-dots {
+  @apply inline-flex space-x-1;
+}
+
+.processing-dots span {
+  @apply w-2 h-2 bg-violet-500 rounded-full animate-pulse;
+}
+
+.processing-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.processing-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+
