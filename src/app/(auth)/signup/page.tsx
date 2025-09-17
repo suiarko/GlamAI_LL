@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
+import { evaluatePasswordStrength, isPasswordStrong } from '@/lib/utils'
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -19,6 +21,7 @@ export default function SignupPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [passwordInfo, setPasswordInfo] = useState(() => evaluatePasswordStrength(''))
   const router = useRouter()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,6 +30,10 @@ export default function SignupPage() {
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }))
+    }
+
+    if (name === 'password') {
+      setPasswordInfo(evaluatePasswordStrength(value))
     }
   }
 
@@ -64,13 +71,51 @@ export default function SignupPage() {
       return
     }
 
+    if (!isPasswordStrong(formData.password)) {
+      setErrors(prev => ({ ...prev, password: 'Use 12+ chars with upper, lower, number, and symbol' }))
+      return
+    }
+
     setIsLoading(true)
-    
-    // Simulate signup process
-    setTimeout(() => {
+    try {
+      const supabase = createClient()
+      const {
+        data: { user },
+        error
+      } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: { full_name: formData.fullName },
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard`
+        }
+      })
+
+      if (error) {
+        setErrors({ general: error.message })
+        setIsLoading(false)
+        return
+      }
+
+      // If email confirmation is enabled, supabase returns user as null until confirmed
+      if (!user) {
+        setIsLoading(false)
+        router.push('/dashboard')
+        return
+      }
+
       setIsLoading(false)
       router.push('/dashboard')
-    }, 1000)
+    } catch (err: any) {
+      setIsLoading(false)
+      setErrors({ general: err?.message || 'Failed to sign up' })
+    }
+  }
+
+  const handleOAuth = async (provider: 'google' | 'facebook') => {
+    const supabase = createClient()
+    const redirectTo = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard`
+    await supabase.auth.signInWithOAuth({ provider, options: { redirectTo } })
   }
 
   return (
@@ -169,6 +214,9 @@ export default function SignupPage() {
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
+                <div className="mt-1 text-xs text-gray-600">
+                  Strength: <span className="font-medium">{passwordInfo.label}</span>
+                </div>
                 {errors.password && (
                   <p className="mt-1 text-sm text-red-600">{errors.password}</p>
                 )}
@@ -230,6 +278,9 @@ export default function SignupPage() {
               >
                 {isLoading ? 'Creating account...' : 'Create Account'}
               </Button>
+              {errors.general && (
+                <p className="text-sm text-red-600 text-center">{errors.general}</p>
+              )}
             </form>
 
             <div className="mt-6">
@@ -243,7 +294,7 @@ export default function SignupPage() {
               </div>
 
               <div className="mt-6 grid grid-cols-2 gap-3">
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full" type="button" onClick={() => handleOAuth('google')}>
                   <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
                     <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                     <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -252,7 +303,7 @@ export default function SignupPage() {
                   </svg>
                   Google
                 </Button>
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full" type="button" onClick={() => handleOAuth('facebook')}>
                   <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                   </svg>

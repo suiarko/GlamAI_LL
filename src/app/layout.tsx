@@ -1,39 +1,35 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import './globals.css'
+// src/app/layout.tsx
 
-const inter = Inter({ subsets: ['latin'] })
+import type { Metadata } from "next";
+// Імпортуємо шрифт Inter з бібліотеки Google Fonts
+import { Inter } from "next/font/google";
+import "./globals.css";
+
+// Налаштовуємо шрифт: вказуємо, які накреслення (жирність) нам потрібні
+const inter = Inter({ 
+  subsets: ["latin", "cyrillic"], // Додаємо кирилицю
+  weight: ["400", "500", "700", "800"], // Regular, Medium, Bold, ExtraBold
+  variable: '--font-inter', // Створюємо CSS-змінну для шрифту
+});
 
 export const metadata: Metadata = {
-  title: 'GlamAI - Transform Your Hairstyle with AI',
-  description: 'Try new looks before visiting the salon. Upload your photo and get instant AI-powered hairstyle transformations.',
-  keywords: 'hairstyle, AI, transformation, beauty, salon, hair styling',
-  authors: [{ name: 'GlamAI Team' }],
-  openGraph: {
-    title: 'GlamAI - Transform Your Hairstyle with AI',
-    description: 'Try new looks before visiting the salon. Upload your photo and get instant AI-powered hairstyle transformations.',
-    type: 'website',
-    locale: 'en_US',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'GlamAI - Transform Your Hairstyle with AI',
-    description: 'Try new looks before visiting the salon. Upload your photo and get instant AI-powered hairstyle transformations.',
-  },
-}
+  title: "GlamAI",
+  description: "AI-Powered Hairstyle Transformations",
+};
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode
-}) {
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
+      {/* Застосовуємо клас шрифту до тегу body.
+        Це зробить Inter шрифтом за замовчуванням для всього сайту.
+      */}
       <body className={inter.className}>
         {children}
       </body>
     </html>
-  )
+  );
 }
-
-

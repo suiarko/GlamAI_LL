@@ -4,6 +4,7 @@
 
 @layer base {
   :root {
+    /* Ця секція для світлої теми, поки залишаємо її без змін */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
@@ -23,36 +24,38 @@
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 262.1 83.3% 57.8%;
-    --radius: 0.5rem;
+    --radius: 0.75rem; /* Збільшив радіус для більш плавних кутів */
   }
 
   .dark {
-    /* --background: 222.2 84% 4.9%; */ /* Старий фон */
-    --background: 257 26% 9%;      /* Новий --color-background: #0D0B14 */
-    --foreground: 210 40% 98%;    /* Текст залишаємо білим */
-
-    /* --primary: 262.1 83.3% 57.8%; */ /* Старий фіолетовий */
-    --primary: 259 63% 60%;       /* Новий --color-primary: #7F56D9 */
-    --primary-foreground: 210 40% 98%;
-
-    /* --accent: 217.2 32.6% 17.5%; */ /* Старий акцент */
-    --accent: 166 100% 38%;       /* Новий --color-accent: #00C49A */
-    --accent-foreground: 210 40% 98%;
-
-    --card: 254 22% 11%;          /* Новий --color-card-background: #161322 */
+    /* --- Нова, розширена палітра для темної теми --- */
+    --background: 257 26% 9%;      /* #0D0B14 */
+    --foreground: 210 40% 98%;    /* #F8FAFC - Основний текст */
+    
+    --card: 254 22% 11%;          /* #161322 - Фон для карток */
     --card-foreground: 210 40% 98%;
-
+    
     --popover: 254 22% 11%;
     --popover-foreground: 210 40% 98%;
-    --secondary: 217.2 32.6% 17.5%;
+    
+    --primary: 259 63% 60%;       /* #7F56D9 - Основний фіолетовий */
+    --primary-foreground: 210 40% 98%;
+    
+    --secondary: 254 22% 16%;     /* #211D2E - Вторинний фон */
     --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --destructive: 0 62.8% 30.6%;
+
+    --accent: 166 100% 38%;       /* #00C49A - Акцентний бірюзовий */
+    --accent-foreground: 257 26% 9%; /* Темний текст для акцентних кнопок */
+    
+    --muted: 254 22% 16%;
+    --muted-foreground: 240 5% 65%; /* #A1A1AA - Для менш важливого тексту */
+    
+    --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 259 63% 60%; /* Оновлюємо колір ring, щоб відповідав новому primary */
+
+    --border: 254 22% 20%;        /* #292438 - Колір для кордорів */
+    --input: 254 22% 20%;
+    --ring: 166 100% 38%;         /* Акцентний колір для фокусу (ring) */
   }
 }
 
@@ -65,44 +68,48 @@
   }
 }
 
-/* Custom styles for MVP */
+/* --- Оновлені кастомні стилі для редизайну --- */
+
+/* Більш витончений градієнт для головного екрану */
 .hero-gradient {
   background-color: hsl(var(--background));
-  background-image: radial-gradient(at 27% 37%, hsl(var(--primary) / 0.1), transparent 50%),
-                    radial-gradient(at 97% 21%, hsl(var(--primary) / 0.15), transparent 50%),
-                    radial-gradient(at 70% 94%, hsl(var(--accent) / 0.1), transparent 50%);
+  background-image: radial-gradient(at 15% 20%, hsl(var(--primary) / 0.15), transparent 70%),
+                    radial-gradient(at 85% 30%, hsl(var(--accent) / 0.1), transparent 70%),
+                    radial-gradient(at 50% 80%, hsl(var(--primary) / 0.1), transparent 70%);
 }
 
+/* Стилі для карток з "ефектом скла" та сяйвом при наведенні */
 .feature-card {
-  @apply bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1;
+  @apply bg-card/50 backdrop-blur-sm border border-border rounded-xl shadow-lg hover:border-accent transition-all duration-300 transform hover:-translate-y-1;
 }
 
 .pricing-card {
-  @apply bg-white rounded-2xl shadow-xl border-2 border-transparent hover:border-violet-200 transition-all duration-300;
+  @apply bg-card/50 backdrop-blur-sm border border-border rounded-2xl shadow-xl transition-all duration-300;
 }
 
+/* Виділена картка з градієнтним кордоном */
 .pricing-card.featured {
-  @apply border-violet-500 scale-105;
+  @apply scale-105 border-transparent;
+  background: linear-gradient(hsl(var(--card)), hsl(var(--card))) padding-box,
+              linear-gradient(to right, hsl(var(--primary)), hsl(var(--accent))) border-box;
 }
 
 .before-after-slider {
-  @apply relative overflow-hidden rounded-lg;
+  @apply relative overflow-hidden rounded-lg border border-border;
 }
 
+/* Оновлена зона завантаження */
 .upload-zone {
-  @apply border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-violet-400 transition-colors duration-200;
+  @apply border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary transition-colors duration-200;
 }
 
 .upload-zone.dragover {
-  @apply border-violet-500 bg-violet-50;
+  @apply border-primary bg-primary/10;
 }
 
-.processing-dots {
-  @apply inline-flex space-x-1;
-}
-
+/* Анімація завантаження з новими кольорами */
 .processing-dots span {
-  @apply w-2 h-2 bg-violet-500 rounded-full animate-pulse;
+  @apply w-2 h-2 bg-primary rounded-full animate-pulse;
 }
 
 .processing-dots span:nth-child(2) {
@@ -112,5 +119,3 @@
 .processing-dots span:nth-child(3) {
   animation-delay: 0.4s;
 }
-
-
